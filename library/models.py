@@ -1,6 +1,8 @@
-from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+from backend.base_models import BaseModel
+from library.managers import CommentManager
 
 
 class Library(models.Model):
@@ -56,7 +58,7 @@ class Author(models.Model):
         db_table = 'authors'
 
 
-class Book(models.Model):
+class Book(BaseModel):
     '''
     Модель книги
     '''
@@ -89,16 +91,10 @@ class Book(models.Model):
         ]
 
 
-class Comment(models.Model):
+class Comment(BaseModel):
     '''
     Модель комментария для книги
     '''
-    commenter = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name='Автор комментария'
-    )
     book = models.ForeignKey(
         Book,
         on_delete=models.CASCADE,
@@ -108,8 +104,10 @@ class Comment(models.Model):
     text = models.TextField(verbose_name='Содержание')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
 
+    active = CommentManager()
+
     def __str__(self):
-        return f'Комментарий {self.commenter.username}'
+        return f'Комментарий {self.owner.username} к книге {self.book.title}'
 
     class Meta:
         verbose_name = 'Комментарий'
