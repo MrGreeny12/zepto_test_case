@@ -65,6 +65,13 @@ class Book(BaseModel):
     title = models.CharField(max_length=512, verbose_name='Название')
     year = models.IntegerField(validators=[MaxValueValidator(2022), MinValueValidator(0)], blank=True, null=True,
                                verbose_name='Год выпуска')
+    library = models.ForeignKey(
+        Library,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='books',
+        verbose_name='Библиотека'
+    )
     author = models.ForeignKey(
         Author,
         on_delete=models.CASCADE,
